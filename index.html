@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Kiosco El Chakeño</title>
+<link href="estilo.css" rel="stylesheet"/>
+</head>
+<body><div style="margin-top: 20px; text-align: center;"><a href="contacto.html" style="margin: 0 15px; font-size: 18px; text-decoration: none; color: #333;">Contacto</a><a href="nosotros.html" style="margin: 0 15px; font-size: 18px; text-decoration: none; color: #333;">Nosotros</a></div>
+<header>
+<h1 id="Titulo">Kiosco El Chakeño</h1>
+<p>¡Todo lo que necesitas en un solo lugar!</p>
+<nav>
+<ul>
+<li><a href="#golosinas">Golosinas</a></li>
+<li><a href="#mercaderia">Mercadería</a></li>
+<li><a href="#limpieza">Limpieza</a></li>
+</ul>
+</nav>
+</header>
+<!-- CARRITO -->
+<div id="carrito">
+<h3>Carrito</h3>
+<ul id="lista-carrito"></ul>
+<p><strong>Total: $<span id="total">0</span></strong></p>
+<button class="vaciar-btn" onclick="vaciarCarrito()">Vaciar carrito</button>
+<button class="pagar-btn" onclick="redirigirAPago()">Pagar</button>
+</div>
+<!-- PRODUCTOS -->
+<section class="productos" id="golosinas">
+<div class="producto">
+<img alt="Alfajor" src="Alfajor.jpeg"/>
+<h3>Alfajor</h3>
+<p class="precio" data-precio="400">$400</p>
+<button onclick="agregarAlCarrito('Alfajor', 400)">Agregar</button>
+</div>
+<div class="producto">
+<img alt="Gomitas Mogul" src="Gomitas Mogul.jpeg"/>
+<h3>Gomitas Mogul</h3>
+<p class="precio" data-precio="500">$500</p>
+<button onclick="agregarAlCarrito('Gomitas Mogul', 500)">Agregar</button>
+</div>
+</section>
+<section class="productos" id="mercaderia">
+<div class="producto">
+<img alt="Arroz" src="Arroz.jpeg"/>
+<h3>Arroz</h3>
+<p class="precio" data-precio="1500">$1500</p>
+<button onclick="agregarAlCarrito('Arroz', 1500)">Agregar</button>
+</div>
+<div class="producto">
+<img alt="Aceite" src="Aceite Girasol.jpeg"/>
+<h3>Aceite Girasol</h3>
+<p class="precio" data-precio="2500">$2500</p>
+<button onclick="agregarAlCarrito('Aceite Girasol', 2500)">Agregar</button>
+</div>
+</section>
+<section class="productos" id="limpieza">
+<div class="producto">
+<img alt="Lavandina X5" src="Lavandina.jpeg"/>
+<h3>Lavandina X5</h3>
+<p class="precio" data-precio="1000">$1000</p>
+<button onclick="agregarAlCarrito('Lavandina X5', 1000)">Agregar</button>
+</div>
+<div class="producto">
+<img alt="Jabón en polvo" src="jabon.jpeg"/>
+<h3>Jabón en Polvo Patito</h3>
+<p class="precio" data-precio="2500">$2500</p>
+<button onclick="agregarAlCarrito('Jabón en Polvo Patito', 2500)">Agregar</button>
+</div>
+</section>
+<footer>
+<p>© 2025 Kiosco El Chakeño - Todos los derechos reservados.</p>
+</footer>
+<button class="toggle-mode" onclick="toggleModoOscuro()">Modo Oscuro</button>
+<script>
+    let carrito = {};
+    let total = 0;
+
+    const lista = document.getElementById('lista-carrito');
+    const totalDisplay = document.getElementById('total');
+
+    function actualizarCarritoUI() {
+      lista.innerHTML = '';
+      total = 0;
+
+      for (let nombre in carrito) {
+        const producto = carrito[nombre];
+        total += producto.precio * producto.cantidad;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          ${nombre} x${producto.cantidad} - $${producto.precio * producto.cantidad}
+          <button onclick="quitarProducto('${nombre}')">X</button>
+        `;
+        lista.appendChild(li);
+      }
+
+      totalDisplay.textContent = total;
+      localStorage.setItem('carrito', JSON.stringify(carrito));
+    }
+
+    function agregarAlCarrito(nombre, precio) {
+      if (carrito[nombre]) {
+        carrito[nombre].cantidad++;
+      } else {
+        carrito[nombre] = { precio, cantidad: 1 };
+      }
+      actualizarCarritoUI();
+    }
+
+    function quitarProducto(nombre) {
+      if (carrito[nombre]) {
+        carrito[nombre].cantidad--;
+        if (carrito[nombre].cantidad <= 0) {
+          delete carrito[nombre];
+        }
+        actualizarCarritoUI();
+      }
+    }
+
+    function vaciarCarrito() {
+      carrito = {};
+      actualizarCarritoUI();
+    }
+
+    function toggleModoOscuro() {
+      document.body.classList.toggle('dark');
+    }
+
+    function pagarConMercadoPago() {
+      if (Object.keys(carrito).length === 0) {
+        alert("El carrito está vacío.");
+        return;
+      }
+
+      const productos = [];
+
+      for (let nombre in carrito) {
+        productos.push({
+          nombre: nombre,
+          cantidad: carrito[nombre].cantidad,
+          precio: carrito[nombre].precio
+        });
+      }
+
+      fetch('https://TU-SITIO.com/pago.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productos)
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.init_point) {
+          window.open(data.init_point, '_blank');
+          vaciarCarrito();
+        } else {
+          alert("Error al generar el link de pago.");
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert("Error al conectar con el servidor.");
+      });
+    }
+
+    window.onload = function () {
+      const guardado = JSON.parse(localStorage.getItem('carrito')) || {};
+      carrito = guardado;
+      actualizarCarritoUI();
+    };
+  </script>
+<div style="margin-top: 20px;"><button style="background-color: transparent; border: none; cursor: pointer;"></button></div>
+<!-- Botón de Pagar -->
+<!-- Modal del Recibo -->
+<div id="modal-recibo" class="modal-recibo">
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarRecibo()">&times;</span>
+    <div style="text-align: center;">
+      <h2>Recibo de compra</h2>
+    </div>
+    <ul id="recibo-lista"></ul>
+    <p><strong>Total: $<span id="recibo-total">0</span></strong></p>
+  </div>
+</div>
+
+<script>
+function mostrarRecibo() {
+  const modal = document.getElementById('modal-recibo');
+  const reciboLista = document.getElementById('recibo-lista');
+  const reciboTotal = document.getElementById('recibo-total');
+  const carritoItems = document.querySelectorAll('#lista-carrito li');
+  const total = document.getElementById('total').textContent;
+
+  reciboLista.innerHTML = '';
+  carritoItems.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = item.textContent;
+    reciboLista.appendChild(li);
+  });
+
+  reciboTotal.textContent = total;
+  modal.style.display = 'block';
+}
+
+function cerrarRecibo() {
+  document.getElementById('modal-recibo').style.display = 'none';
+}
+</script>
+
+<style>
+.modal-recibo {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.5);
+}
+
+.modal-contenido {
+  background-color: #fff;
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 80%;
+  max-width: 400px;
+}
+
+.cerrar {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.pagar-btn {
+  margin-top: 10px;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+</style>
+
+
+<script>
+function redirigirAPago() {
+    const items = [];
+    const carritoItems = document.querySelectorAll('#lista-carrito li');
+    carritoItems.forEach(item => {
+        items.push(item.textContent);
+    });
+    const total = document.getElementById('total').textContent;
+    const params = new URLSearchParams();
+    params.set("items", JSON.stringify(items));
+    params.set("total", total);
+    window.location.href = "recibo.html?" + params.toString();
+}
+</script>
+
+</body>
+</html>

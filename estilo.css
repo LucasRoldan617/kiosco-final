@@ -1,0 +1,156 @@
+.root {
+  --fondo: skyblue;
+  --texto: #222;
+  --carrito-bg: #f8f8f8;
+}
+
+body.dark {
+  --fondo: #1e1e1e;
+  --texto: #eee;
+  --carrito-bg: #333;
+}
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0 1rem;
+  transition: background 0.3s, color 0.3s;
+}
+
+header {
+  text-align: center;
+  padding: 1rem;
+}
+
+#Titulo {
+  color: red;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: white;
+  background-color: #333;
+  padding: 8px 16px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+
+nav a:hover {
+  background-color: #555;
+}
+
+#carrito {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--carrito-bg);
+  border: 1px solid #ccc;
+  padding: 1rem;
+  max-width: 250px;
+  z-index: 100;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.2);
+}
+
+#carrito h3 {
+  margin-top: 0;
+}
+
+#lista-carrito li {
+  padding: 5px 0;
+  border-bottom: 1px dashed #ccc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+#lista-carrito button {
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 2px 6px;
+  cursor: pointer;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateX(10px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.producto {
+  text-align: center;
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: white;
+  transition: transform 0.2s;
+}
+
+.producto:hover {
+  transform: scale(1.03);
+}
+
+.producto img {
+  max-width: 100%;
+  height: auto;
+}
+
+.producto button {
+  margin-top: 10px;
+  background: green;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.toggle-mode {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  background: black;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 200;
+}
+
+.vaciar-btn, .comprar-btn {
+  background: #777;
+  color: white;
+  border: none;
+  padding: 5px 8px;
+  border-radius: 4px;
+  margin-top: 5px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  margin-top: 10px;
+}
+
+footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.productos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
